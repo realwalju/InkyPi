@@ -1,0 +1,95 @@
+<div class="form-group">
+    <label for="title" class="form-label">Display Name:</label>
+    <input type="text" id="title" name="title" class="form-input" placeholder="WINDOWS PC">
+</div>
+
+<div class="form-group">
+    <label for="font_size_base" class="form-label">Font Size:</label>
+    <select id="font_size_base" name="font_size_base" class="form-input">
+        <option value="12">Small (Compact)</option>
+        <option value="14">Medium (Standard)</option>
+        <option value="16">Large (Bold)</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="form-label">Show Stats:</label>
+    <div class="form-check">
+        <input type="checkbox" id="show_cpu" name="show_cpu"> 
+        <span>CPU Usage</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_gpu" name="show_gpu"> 
+        <span>GPU Usage</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_ram" name="show_ram"> 
+        <span>RAM Usage</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_disk" name="show_disk"> 
+        <span>SSD Space (C:)</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_local_ip" name="show_local_ip"> 
+        <span>Internal IP</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_ext_ip" name="show_ext_ip"> 
+        <span>External IP</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_focus" name="show_focus"> 
+        <span>Active Focus App</span>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" id="show_bars" name="show_bars"> 
+        <span>Show Progress Bars</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxIds = [
+            'show_cpu', 'show_gpu', 'show_ram', 'show_disk', 
+            'show_local_ip', 'show_ext_ip', 'show_focus', 'show_bars'
+        ];
+
+        if (typeof pluginSettings !== 'undefined') {
+            document.getElementById('title').value = pluginSettings.title || 'WINDOWS PC';
+            document.getElementById('font_size_base').value = pluginSettings.font_size_base || '14';
+            
+            checkboxIds.forEach(id => {
+                const val = pluginSettings[id];
+                const isChecked = (val === true || val === 'true');
+                const el = document.getElementById(id);
+                if (el) {
+                    el.checked = isChecked;
+                    el.value = isChecked ? 'true' : 'false';
+                }
+            });
+        }
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                e.target.value = e.target.checked ? 'true' : 'false';
+            });
+        });
+    });
+</script>
+
+<style>
+    .form-check {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+    .form-check input {
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+    }
+    .form-check span {
+        font-size: 14px;
+    }
+</style>

@@ -1,0 +1,6 @@
+{
+    "display_name": "Plugin Manager",
+    "id": "pluginmanager",
+    "class": "PluginManager",
+    "repository": "https://github.com/RobinWts/InkyPi-Plugin-PluginManager"
+}

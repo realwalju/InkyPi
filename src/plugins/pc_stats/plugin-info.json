@@ -1,0 +1,6 @@
+{
+    "display_name": "Windows PC Stats",
+    "id": "pc_stats",
+    "class": "PCStats",
+    "repository": "https://github.com/sndjy1986/InkyPi-PC_Stats"
+}

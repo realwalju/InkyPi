@@ -1,0 +1,24 @@
+# Bundled third-party plugins
+
+These community plugins are copied into `src/plugins/` so they ship with this fork instead of being installed one by one on the Pi. All credit goes to their authors. Check the upstream repos for updates.
+
+| Plugin | Folder | Author | Source (commit) | License |
+|:-|:-|:-|:-|:-|
+| Plugin Manager | `pluginmanager` | [RobinWts](https://github.com/RobinWts) | [InkyPi-Plugin-PluginManager](https://github.com/RobinWts/InkyPi-Plugin-PluginManager) (`4e98349`) | GPL-3.0 (stated in its README) |
+| Hardware Buttons | `hardwarebuttons` | [RobinWts](https://github.com/RobinWts) | [InkyPi-Plugin-hardwarebuttons](https://github.com/RobinWts/InkyPi-Plugin-hardwarebuttons) (`e208ed6`) | None specified |
+| Duo Weather | `duo_weather` | [saulob](https://github.com/saulob) | [InkyPi-Duo-Weather](https://github.com/saulob/InkyPi-Duo-Weather) (`6a3d9c1`) | MIT |
+| Mini Weather | `mini_weather` | [saulob](https://github.com/saulob) | [InkyPi-Mini-Weather](https://github.com/saulob/InkyPi-Mini-Weather) (`5cc829e`) | MIT |
+| Literature Clock | `literature_clock` | [harshithdepa](https://github.com/harshithdepa) | [InkyPi-literature-clock](https://github.com/harshithdepa/InkyPi-literature-clock) (`113f2d3`) | MIT |
+| Windows PC Stats | `pc_stats` | [sndjy1986](https://github.com/sndjy1986) | [InkyPi-PC_Stats](https://github.com/sndjy1986/InkyPi-PC_Stats) (`02dfb3e`) | None specified |
+
+## Changes from upstream
+
+- **Core patch pre-applied.** Plugin Manager and Hardware Buttons both patch `src/inkypi.py` and `src/plugins/plugin_registry.py` at runtime to register their Flask routes. That patch (`register_plugin_blueprints`) is committed here so the Pi's checkout stays clean and `git pull` keeps working.
+- **`gpiozero` added to `install/requirements.txt`** for Hardware Buttons, since InkyPi runs in its own venv. Run `sudo bash install/update.sh` to install it.
+- **PC Stats file path** changed from the original author's home folder to `/home/pi/pc_stats.txt`, matching `DEST_PATH` in its bundled Windows script. Its Windows scripts live in `src/plugins/pc_stats/windows_scripts/`.
+- Filled in or corrected the `repository` field in `plugin-info.json` for Duo Weather, PC Stats and Literature Clock.
+
+## Known issues
+
+- PC Stats draws a fixed 250×122 canvas sized for an Inky pHAT, and its Windows script uses `wmic`, which newer Windows 11 builds no longer include.
+- Hardware Buttons and PC Stats have no license in their upstream repos.

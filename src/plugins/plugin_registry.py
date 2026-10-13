@@ -50,3 +50,19 @@ def get_plugin_instance(plugin_config):
         return plugin_class
     else:
         raise ValueError(f"Plugin '{plugin_id}' is not registered.")
+
+def register_plugin_blueprints(app):
+    """Register Flask blueprints from plugins that expose a get_blueprint() method.
+
+    Pre-applies the core patch that the pluginmanager and hardwarebuttons plugins
+    would otherwise write into this file at runtime.
+    """
+    for plugin_id, plugin_instance in PLUGIN_CLASSES.items():
+        try:
+            if hasattr(plugin_instance, 'get_blueprint'):
+                bp = plugin_instance.get_blueprint()
+                if bp:
+                    app.register_blueprint(bp)
+                    logger.info(f"Registered blueprint for plugin '{plugin_id}'")
+        except Exception as e:
+            logger.warning(f"Failed to register blueprint for plugin '{plugin_id}': {e}")

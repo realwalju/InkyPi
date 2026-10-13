@@ -4,6 +4,8 @@ This is [Walton Cheung](https://walju.net)'s fork of [fatihak/InkyPi](https://gi
 
 <img src="./docs/images/walju-build.webp" alt="Raspberry Pi e-ink weather dashboard in a custom wooden frame" width="600" />
 
+This fork also bundles several community plugins (Plugin Manager, Hardware Buttons, Duo Weather, Mini Weather, Literature Clock and Windows PC Stats). See [docs/third_party_plugins.md](./docs/third_party_plugins.md) for credits and changes.
+
 More of my projects are at [walju.net](https://walju.net).
 
 ---
