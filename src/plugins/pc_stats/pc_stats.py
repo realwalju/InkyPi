@@ -22,7 +22,7 @@ class PCStats(BasePlugin):
         # 3. Pull Settings
         title = settings.get('title', 'WINDOWS PC')
         base_size = int(settings.get('font_size_base', 14))
-        pc_file = "/home/walju/pc_stats.txt"  # must match DEST_PATH in windows_scripts/pc_sync_hidden.bat
+        pc_file = "/home/walju/pc_stats.txt"  # must match DestPath in windows_scripts/pc_sync.ps1
 
         # 4. Load Fonts
         try:

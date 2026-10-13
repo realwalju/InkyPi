@@ -15,10 +15,11 @@ These community plugins are copied into `src/plugins/` so they ship with this fo
 
 - **Core patch pre-applied.** Plugin Manager and Hardware Buttons both patch `src/inkypi.py` and `src/plugins/plugin_registry.py` at runtime to register their Flask routes. That patch (`register_plugin_blueprints`) is committed here so the Pi's checkout stays clean and `git pull` keeps working.
 - **`gpiozero` added to `install/requirements.txt`** for Hardware Buttons, since InkyPi runs in its own venv. Run `sudo bash install/update.sh` to install it.
-- **PC Stats file path** changed from the original author's home folder to `/home/walju/pc_stats.txt`, and the bundled Windows script now targets `walju@walju.local` to match. Its Windows scripts live in `src/plugins/pc_stats/windows_scripts/`.
+- **PC Stats file path** changed from the original author's home folder to `/home/walju/pc_stats.txt`.
+- **PC Stats sync script rewritten in PowerShell.** `windows_scripts/pc_sync.ps1` replaces `pc_sync_hidden.bat`, which used `wmic` (removed from recent Windows 11 builds). It sends to `walju@walju.local` by default, reports RAM as percent used (so it gets a progress bar), reads the actually focused window, falls back to the Windows GPU counter on non-NVIDIA cards, and leaves out any stat it can't read. `start_sync.vbs` launches it hidden from its own folder. Test with `pc_sync.ps1 -DryRun` (print only) or `-Once` (single upload).
 - Filled in or corrected the `repository` field in `plugin-info.json` for Duo Weather, PC Stats and Literature Clock.
 
 ## Known issues
 
-- PC Stats draws a fixed 250×122 canvas sized for an Inky pHAT, and its Windows script uses `wmic`, which newer Windows 11 builds no longer include.
+- PC Stats draws a fixed 250×122 canvas sized for an Inky pHAT.
 - Hardware Buttons and PC Stats have no license in their upstream repos.
