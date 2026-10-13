@@ -15,7 +15,7 @@ These community plugins are copied into `src/plugins/` so they ship with this fo
 
 - **Core patch pre-applied.** Plugin Manager and Hardware Buttons both patch `src/inkypi.py` and `src/plugins/plugin_registry.py` at runtime to register their Flask routes. That patch (`register_plugin_blueprints`) is committed here so the Pi's checkout stays clean and `git pull` keeps working.
 - **`gpiozero` added to `install/requirements.txt`** for Hardware Buttons, since InkyPi runs in its own venv. Run `sudo bash install/update.sh` to install it.
-- **PC Stats file path** changed from the original author's home folder to `/home/pi/pc_stats.txt`, matching `DEST_PATH` in its bundled Windows script. Its Windows scripts live in `src/plugins/pc_stats/windows_scripts/`.
+- **PC Stats file path** changed from the original author's home folder to `/home/walju/pc_stats.txt`, and the bundled Windows script now targets `walju@walju.local` to match. Its Windows scripts live in `src/plugins/pc_stats/windows_scripts/`.
 - Filled in or corrected the `repository` field in `plugin-info.json` for Duo Weather, PC Stats and Literature Clock.
 
 ## Known issues

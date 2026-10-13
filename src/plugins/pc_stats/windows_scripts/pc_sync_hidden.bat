@@ -5,9 +5,9 @@ setlocal enabledelayedexpansion
 :: CONFIGURATION SECTION
 :: ==========================================
 :: Change these to match your Raspberry Pi setup
-set "DEST_USER=pi"
-set "DEST_HOST=raspberrypi.local"
-set "DEST_PATH=/home/pi/pc_stats.txt"
+set "DEST_USER=walju"
+set "DEST_HOST=walju.local"
+set "DEST_PATH=/home/walju/pc_stats.txt"
 set "WORKING_DIR=C:\PiTools"
 set "SYNC_INTERVAL=60"
 :: ==========================================
