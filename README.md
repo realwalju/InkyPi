@@ -1,3 +1,15 @@
+# InkyPi · WalJu's build
+
+This is [Walton Cheung](https://walju.net)'s fork of [fatihak/InkyPi](https://github.com/fatihak/InkyPi), the open-source e-ink display project. I run it on a Raspberry Pi behind an e-ink display in a custom wooden frame, showing weather and other live data. This fork is where my customizations will live.
+
+<img src="./docs/images/walju-build.webp" alt="Raspberry Pi e-ink weather dashboard in a custom wooden frame" width="600" />
+
+More of my projects are at [walju.net](https://walju.net).
+
+---
+
+*The original InkyPi README follows.*
+
 # InkyPi 
 
 <img src="./docs/images/inky_clock.jpg" />
