@@ -1,0 +1,6 @@
+{
+    "display_name": "MQTT Dashboard",
+    "id": "mqtt_dashboard",
+    "class": "MqttDashboard",
+    "repository": "https://github.com/realwalju/InkyPi"
+}

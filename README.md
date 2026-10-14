@@ -6,6 +6,8 @@ This is [Walton Cheung](https://walju.net)'s fork of [fatihak/InkyPi](https://gi
 
 This fork also bundles several community plugins (Plugin Manager, Hardware Buttons, Duo Weather, Mini Weather, Literature Clock and Windows PC Stats). See [docs/third_party_plugins.md](./docs/third_party_plugins.md) for credits and changes.
 
+It adds an **MQTT Dashboard** plugin that turns live sensor data into tiles with sparklines, plus ESP32-S3 firmware to feed it. See [docs/mqtt_dashboard.md](./docs/mqtt_dashboard.md) and [hardware/esp32-sensor-node](./hardware/esp32-sensor-node).
+
 More of my projects are at [walju.net](https://walju.net).
 
 ---

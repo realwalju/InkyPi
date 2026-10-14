@@ -1,0 +1,2 @@
+# Resolve walju.local (and other .local names) through mDNS.
+CONFIG_LWIP_DNS_SUPPORT_MDNS_QUERIES=y

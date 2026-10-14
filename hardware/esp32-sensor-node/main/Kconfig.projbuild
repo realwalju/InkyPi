@@ -1,0 +1,43 @@
+menu "InkyPi Sensor Node"
+
+    config NODE_WIFI_SSID
+        string "Wi-Fi SSID"
+        default ""
+
+    config NODE_WIFI_PASSWORD
+        string "Wi-Fi password"
+        default ""
+
+    config NODE_MQTT_BROKER_URI
+        string "MQTT broker URI"
+        default "mqtt://walju.local"
+        help
+            Mosquitto on the InkyPi. Use the Pi's IP address (mqtt://192.168.1.x)
+            if .local names don't resolve on your network.
+
+    config NODE_MQTT_USERNAME
+        string "MQTT username"
+        default ""
+
+    config NODE_MQTT_PASSWORD
+        string "MQTT password"
+        default ""
+
+    config NODE_NAME
+        string "Node name"
+        default "esp32-s3"
+        help
+            Topics are published under inkypi/<node name>/.
+
+    config NODE_PUBLISH_INTERVAL_S
+        int "Publish interval (seconds)"
+        range 5 3600
+        default 30
+
+    config NODE_BUTTON_GPIO
+        int "Button GPIO"
+        default 0
+        help
+            GPIO 0 is the BOOT button on most ESP32-S3 dev boards. Active low.
+
+endmenu

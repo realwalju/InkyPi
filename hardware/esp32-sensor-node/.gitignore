@@ -1,0 +1,5 @@
+build/
+managed_components/
+# sdkconfig holds the Wi-Fi and MQTT passwords set in menuconfig.
+sdkconfig
+sdkconfig.old

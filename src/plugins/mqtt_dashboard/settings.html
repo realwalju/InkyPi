@@ -1,0 +1,150 @@
+<div class="form-group">
+    <label class="form-label">Broker:</label>
+    <span class="mqtt-status">
+        {{ mqtt_status.broker or "not started" }} ·
+        {% if mqtt_status.connected %}connected{% else %}disconnected{% if mqtt_status.error %} ({{ mqtt_status.error }}){% endif %}{% endif %}
+    </span>
+    <p class="mqtt-hint">Set MQTT_HOST, MQTT_USERNAME and MQTT_PASSWORD on the API Keys page, then restart InkyPi.</p>
+</div>
+
+<div class="form-group">
+    <label for="title" class="form-label">Title:</label>
+    <input type="text" id="title" name="title" class="form-input" placeholder="SENSORS">
+</div>
+
+<div class="form-group nowrap">
+    <label for="windowHours" class="form-label">Chart Window:</label>
+    <select id="windowHours" name="windowHours" class="form-input">
+        <option value="1">1 hour</option>
+        <option value="6">6 hours</option>
+        <option value="12">12 hours</option>
+        <option value="24">24 hours</option>
+    </select>
+</div>
+
+<div class="form-group nowrap">
+    <label for="staleMinutes" class="form-label">Mark Stale After (min):</label>
+    <input type="number" id="staleMinutes" name="staleMinutes" class="form-input" min="1" max="1440" placeholder="15">
+</div>
+
+<div>
+    <label class="form-label">Tiles:</label>
+    <p class="mqtt-hint">Field picks a value out of a JSON payload, e.g. <code>temp_c</code> or <code>sensor.humidity</code>. Leave it blank for plain numbers or text.</p>
+    <div id="tileList"></div>
+    <button type="button" class="form-input collapsible" onclick="addTileInput()">Add Tile</button>
+</div>
+
+<datalist id="mqttTopics">
+    {% for t in mqtt_topics %}<option value="{{ t.topic }}">{% endfor %}
+</datalist>
+
+{% if mqtt_topics %}
+<div class="form-group">
+    <label class="form-label">Topics seen ({{ mqtt_topics|length }}):</label>
+    <div class="mqtt-topics">
+        {% for t in mqtt_topics %}
+        <div class="mqtt-topic">
+            <code>{{ t.topic }}</code>
+            {% if t.fields %}
+                {% for f in t.fields %}{% if f %}<button type="button" class="mqtt-add" onclick="addTileInput('', {{ t.topic|tojson|forceescape }}, {{ f|tojson|forceescape }})">+ {{ f }}</button>{% endif %}{% endfor %}
+                {% if '' in t.fields %}<button type="button" class="mqtt-add" onclick="addTileInput('', {{ t.topic|tojson|forceescape }}, '')">+ add</button>{% endif %}
+            {% else %}
+                <button type="button" class="mqtt-add" onclick="addTileInput('', {{ t.topic|tojson|forceescape }}, '')">+ add</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function addTileInput(label = '', topic = '', field = '', unit = '') {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('tile-entry', 'form-group');
+
+        const makeInput = (name, placeholder, value, extra = {}) => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = name;
+            input.placeholder = placeholder;
+            input.value = value;
+            input.classList.add('form-input');
+            Object.assign(input, extra);
+            return input;
+        };
+
+        const topicInput = makeInput('tileTopic[]', 'Topic', topic, { required: true });
+        topicInput.setAttribute('list', 'mqttTopics');
+        wrapper.appendChild(makeInput('tileLabel[]', 'Label', label));
+        wrapper.appendChild(topicInput);
+        wrapper.appendChild(makeInput('tileField[]', 'Field', field));
+        wrapper.appendChild(makeInput('tileUnit[]', 'Unit', unit));
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerText = '✕';
+        removeBtn.classList.add('remove-btn');
+        removeBtn.onclick = () => wrapper.remove();
+        wrapper.appendChild(removeBtn);
+
+        document.getElementById('tileList').appendChild(wrapper);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        let tiles = [];
+        if (loadPluginSettings) {
+            document.getElementById('title').value = pluginSettings.title || '';
+            document.getElementById('windowHours').value = pluginSettings.windowHours || '24';
+            document.getElementById('staleMinutes').value = pluginSettings.staleMinutes || '';
+            const topics = pluginSettings['tileTopic[]'] || [];
+            tiles = topics.map((topic, i) => ({
+                label: (pluginSettings['tileLabel[]'] || [])[i] || '',
+                topic: topic || '',
+                field: (pluginSettings['tileField[]'] || [])[i] || '',
+                unit: (pluginSettings['tileUnit[]'] || [])[i] || '',
+            }));
+        } else {
+            document.getElementById('windowHours').value = '24';
+        }
+        if (tiles.length === 0) {
+            tiles = [{ label: '', topic: '', field: '', unit: '' }];
+        }
+        tiles.forEach(t => addTileInput(t.label, t.topic, t.field, t.unit));
+    });
+</script>
+
+<style>
+    .tile-entry {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+    .tile-entry input[name="tileTopic[]"] {
+        flex: 2;
+    }
+    .tile-entry input {
+        flex: 1;
+        min-width: 0;
+    }
+    .mqtt-hint {
+        font-size: 0.85em;
+        opacity: 0.75;
+        margin: 4px 0;
+    }
+    .mqtt-topics {
+        max-height: 220px;
+        overflow-y: auto;
+    }
+    .mqtt-topic {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    .mqtt-add {
+        font-size: 0.8em;
+        padding: 2px 6px;
+        cursor: pointer;
+    }
+</style>

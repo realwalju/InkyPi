@@ -172,3 +172,7 @@ mock_display_output/
 # Static Files added by install/update_vendors.sh
 /src/static/scripts/
 /src/static/styles/
+
+# MQTT Dashboard history, written on the device
+/src/config/mqtt_history.json
+/src/config/mqtt_history.json.tmp
