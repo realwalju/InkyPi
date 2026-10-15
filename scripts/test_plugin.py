@@ -1,63 +1,68 @@
-import json
-from src.plugins.plugin_registry import load_plugins, get_plugin_instance
-from src.utils.image_utils import resize_image, change_orientation
-from unittest.mock import patch, MagicMock
-from PIL import Image
+"""Render offline Today layout samples at common e-ink display sizes."""
+import argparse
+from copy import deepcopy
+from datetime import datetime
+from pathlib import Path
+import sys
+from zoneinfo import ZoneInfo
 
-PLUGIN_CONFIG_FILE = "install/config_base/plugins.json"
-RESOLUTIONS = [
-    [400, 300],	# Inky wHAT
-    [640, 400], # Inky Impression 4"
-    [600, 448], # Inky Impression 5.7"
-    [800, 480], # Inky Impression 7.3"
-]
-ORIENTATIONS = ["horizontal", "vertical"]
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 
-plugin_id = "ai_text"
-plugin_settings = {
-    "title": "Today In History",
-    "textModel": "gpt-4o",
-    "textPrompt": "idk",
-    "selectedFrame": "Rectangle"
-}
+from plugins.today.layout import render_dashboard
 
-mock_device_config = MagicMock()
-with open(PLUGIN_CONFIG_FILE) as f:
-    plugins = json.load(f)
 
-plugin_config = [config for config in plugins if config.get('id') == plugin_id]
+def sample_data():
+    return {
+        "now": datetime(2026, 10, 14, 9, 30, tzinfo=ZoneInfo("America/Los_Angeles")),
+        "title": "Today / sample",
+        "time_format": "12h",
+        "reminder": "Bring the library books back",
+        "weather": {
+            "label": "Outside", "message": None, "temperature": "18", "unit": "°C",
+            "description": "Partly cloudy", "feels_like": "17", "high": "22", "low": "13", "rain": "10",
+        },
+        "agenda": {
+            "events": [
+                {"when": "Today · 10:30 AM", "title": "Project check-in"},
+                {"when": "Today · 2:00 PM", "title": "Workshop: test the new sensor"},
+                {"when": "Tomorrow · All day", "title": "Library books due"},
+            ],
+            "message": "", "warning": "",
+        },
+        "sensors": [
+            {"label": "Room", "value": "21.5", "unit": "°C", "status": "just now", "stale": False},
+            {"label": "Humidity", "value": "45", "unit": "%", "status": "1m ago", "stale": False},
+            {"label": "Node", "value": "online", "unit": "", "status": "Stale · 30m ago", "stale": True},
+        ],
+    }
 
-if not plugin_config:
-    exit(f"Plugin {plugin_id} not found in plugin config file: {PLUGIN_CONFIG_FILE}")
 
-load_plugins(plugin_config)
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "mock_display_output" / "today")
+    args = parser.parse_args()
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    data = sample_data()
+    for width, height in [(800, 480), (480, 800), (600, 448), (400, 300), (300, 400)]:
+        path = args.output_dir / f"today-sample-{width}x{height}.png"
+        render_dashboard((width, height), data).save(path)
+        print(path)
+    empty = deepcopy(data)
+    empty.update(
+        reminder="", sensors=[],
+        weather={"label": "Weather", "message": "Weather unavailable"},
+        agenda={"events": [], "message": "Calendar unavailable", "warning": ""},
+    )
+    render_dashboard((800, 480), empty).save(args.output_dir / "today-offline.png")
+    long = deepcopy(data)
+    long["reminder"] = "A very long reminder that needs to be shortened to remain inside the screen"
+    long["agenda"]["warning"] = "Some calendars unavailable"
+    long["agenda"]["events"][0]["title"] = "A long event title with extra details that will not fit in a small panel"
+    long["sensors"][0].update(label="An unusually long room temperature label", value="Missing field", unit="")
+    render_dashboard((400, 300), long).save(args.output_dir / "today-long-text.png")
 
-plugin_config = plugin_config[0]
-plugin_instance = get_plugin_instance(plugin_config)
 
-total_height = sum([max(resolution) for resolution in RESOLUTIONS])
-total_width = max([max(resolution) for resolution in RESOLUTIONS]) * 2
-
-composite = Image.new('RGB', (total_width, total_height), color='gray')
-y = 0
-for resolution in RESOLUTIONS:
-    x = 0
-    width, height = resolution
-    for orientation in ORIENTATIONS:
-        mock_device_config.get_resolution.return_value = resolution
-        mock_device_config.get_config.return_value = orientation
-
-        img = plugin_instance.generate_image(plugin_settings, mock_device_config)
-
-        # post processing thats applied before being displayed
-        img = change_orientation(img, orientation)
-        img = resize_image(img, resolution, plugin_config.get('image_settings', []))
-        # rotate the image again when pasting
-        if orientation == "vertical":
-            img = img.rotate(-90, expand=1)
-        composite.paste(img, (x, y))
-        x= int(total_width/2)
-    y+= max(width, height)
-
-composite.show()
+if __name__ == "__main__":
+    main()
 

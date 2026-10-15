@@ -6,12 +6,15 @@ This is [Walton Cheung](https://walju.net)'s fork of [InkyPi](https://github.com
 
 ## What's in this fork
 
+- **Today dashboard:** Weather, the next three calendar events, a reminder, and optional MQTT readings on one screen. Each section is optional and unavailable sources are labelled independently. See the [Today setup guide](docs/today.md).
 - **MQTT Dashboard:** Turns MQTT messages into tiles with current values, message age, and sparklines. It accepts numbers, text, and fields from JSON payloads. See the [setup guide](docs/mqtt_dashboard.md).
 - **ESP32-S3 sensor node:** ESP-IDF firmware publishes chip temperature, Wi-Fi signal, free heap, uptime, and BOOT-button state to MQTT. See the [firmware guide](hardware/esp32-sensor-node/README.md). The chip temperature is a board diagnostic, not room temperature.
-- **Bundled community plugins:** Plugin Manager, Hardware Buttons, Duo Weather, Mini Weather, Literature Clock, and Windows PC Stats are included in `src/plugins/`. The [plugin credits and changes](docs/third_party_plugins.md) identify their authors and this fork's adjustments.
+- **Bundled community plugins:** Plugin Manager, Duo Weather, Mini Weather, Literature Clock, and Windows PC Stats are included in `src/plugins/`. The [plugin credits and changes](docs/third_party_plugins.md) identify their authors and this fork's adjustments.
 - **Windows PC Stats adjustments:** The layout scales to the configured display, and the included PowerShell sync script works with current Windows builds. Its default Pi destination is specific to this build; see the [plugin notes](docs/third_party_plugins.md) before using it on another device.
 
-The upstream InkyPi features are here too: a web interface, scheduled playlists, and plugins for clocks, weather, calendars, images, news, comics, and more. This fork retains support for the display hardware handled by InkyPi's installer, including Pimoroni Inky and supported Waveshare e-paper models.
+The upstream web interface, scheduled playlists, and plugins for clocks, weather, calendars, images, news, and comics are here too. AI Image is included; Year Progress, AI Text, GitHub, and Hardware Buttons have been removed from this build. Saved playlist entries for those removed plugins are dropped when the configuration loads, and saved with the next configuration update. Other plugin settings are retained.
+
+This fork retains support for the display hardware handled by InkyPi's installer, including Pimoroni Inky and supported Waveshare e-paper models.
 
 ## Install on a Raspberry Pi
 

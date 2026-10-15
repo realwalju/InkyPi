@@ -81,7 +81,7 @@ app.register_blueprint(plugin_bp)
 app.register_blueprint(playlist_bp)
 app.register_blueprint(apikeys_bp)
 
-# Register blueprints exposed by plugins (pluginmanager, hardwarebuttons)
+# Register blueprints exposed by plugins (such as Plugin Manager)
 register_plugin_blueprints(app)
 
 # Register opener for HEIF/HEIC images

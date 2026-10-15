@@ -6,6 +6,10 @@ from model import PlaylistManager, RefreshInfo
 
 logger = logging.getLogger(__name__)
 
+# Retired from this fork. Only remove saved instances when the plugin is absent,
+# so a deliberately reinstalled community plugin can still be used.
+RETIRED_PLUGINS = {"year_progress", "ai_text", "github", "hardwarebuttons"}
+
 class Config:
     # Base path for the project directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -120,13 +124,23 @@ class Config:
     def load_playlist_manager(self):
         """Loads the playlist manager object from the config."""
         playlist_manager = PlaylistManager.from_dict(self.get_config("playlist_config"))
+        retired = RETIRED_PLUGINS - {plugin["id"] for plugin in self.plugins_list}
+        for playlist in playlist_manager.playlists:
+            retained = [plugin for plugin in playlist.plugins if plugin.plugin_id not in retired]
+            if len(retained) != len(playlist.plugins):
+                logger.info("Removing retired plugin instances from playlist %s", playlist.name)
+                playlist.plugins = retained
+                playlist.current_plugin_index = None
         if not playlist_manager.playlists:
             playlist_manager.add_default_playlist()
         return playlist_manager
 
     def load_refresh_info(self):
         """Loads the refresh information from the config."""
-        return RefreshInfo.from_dict(self.get_config("refresh_info"))
+        info = self.get_config("refresh_info")
+        if info.get("plugin_id") in RETIRED_PLUGINS and not self.get_plugin(info["plugin_id"]):
+            info = {}
+        return RefreshInfo.from_dict(info)
 
     def get_playlist_manager(self):
         """Returns the playlist manager."""

@@ -54,8 +54,8 @@ def get_plugin_instance(plugin_config):
 def register_plugin_blueprints(app):
     """Register Flask blueprints from plugins that expose a get_blueprint() method.
 
-    Pre-applies the core patch that the pluginmanager and hardwarebuttons plugins
-    would otherwise write into this file at runtime.
+    Pre-applies the core patch that Plugin Manager would otherwise write into
+    this file at runtime.
     """
     for plugin_id, plugin_instance in PLUGIN_CLASSES.items():
         try:

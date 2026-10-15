@@ -19,7 +19,7 @@ Certain plugins, like the AI Image plugin, require API credentials to function. 
 
 ## Open AI Key
 
-Required for the AI Image and AI Text Plugins
+Required for the AI Image plugin
 
 - Login or create an account on the [Open AI developer platform](https://platform.openai.com/docs/overview)
 - Crate a secret key from the API Keys tab in the Settings page
@@ -69,18 +69,6 @@ Required for the Unsplash Plugin
 - Store your api key in the .env file with the key `UNSPLASH_ACCESS_KEY`
     ```
     UNSPLASH_ACCESS_KEY=your-key
-    ```
-
-## GitHub Key
-
-Required for the GitHub Plugin
-
-- Login to your Github profile https://github.com/settings/profile
-- Under Developer Settings, create a new Personal access token (classic)
-- Assign the `read:user` scope and generate the token
-- Store your api key in the .env file with the key `GITHUB_SECRET`
-    ```
-    GITHUB_SECRET=your-key
     ```
 
 ## Immich Key

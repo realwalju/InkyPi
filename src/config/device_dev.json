@@ -7,13 +7,12 @@
     ],
     "orientation": "horizontal",
     "plugin_order": [
+        "today",
         "calendar",
         "ai_image",
-        "ai_text",
         "clock",
         "comic",
         "countdown",
-        "github",
         "image_album",
         "image_folder",
         "image_upload",
@@ -25,8 +24,7 @@
         "todo_list",
         "unsplash",
         "weather",
-        "wpotd",
-        "year_progress"
+        "wpotd"
     ],
     "playlist_config": {
         "playlists": [
