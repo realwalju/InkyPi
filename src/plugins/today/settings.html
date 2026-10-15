@@ -1,0 +1,107 @@
+<p>Weather, upcoming events, a reminder, and up to three sensor readings on one screen. Every section is optional.</p>
+
+<div class="form-group">
+    <label for="title" class="form-label">Title:</label>
+    <input id="title" name="title" class="form-input" maxlength="60" placeholder="Today">
+</div>
+<div class="form-group">
+    <label for="reminder" class="form-label">Reminder:</label>
+    <input id="reminder" name="reminder" class="form-input" maxlength="160" placeholder="One thing to remember today">
+    <small>Leave blank to hide. Long reminders are shortened to fit the display.</small>
+</div>
+
+<h3>Weather</h3>
+<div class="form-group">
+    <label for="showWeather" class="form-label">Weather section:</label>
+    <select id="showWeather" name="showWeather" class="form-input">
+        <option value="true">Show</option><option value="false">Hide</option>
+    </select>
+</div>
+<p>Uses Open-Meteo; no API key is required. Copy coordinates from your existing weather plugin or a map.</p>
+<div class="form-group">
+    <label for="locationName" class="form-label">Location label:</label>
+    <input id="locationName" name="locationName" class="form-input" maxlength="60" placeholder="Outside">
+</div>
+<div class="today-fields">
+    <div class="form-group">
+        <label for="latitude" class="form-label">Latitude:</label>
+        <input id="latitude" name="latitude" class="form-input" type="number" step="any" min="-90" max="90" placeholder="e.g. 37.77">
+    </div>
+    <div class="form-group">
+        <label for="longitude" class="form-label">Longitude:</label>
+        <input id="longitude" name="longitude" class="form-input" type="number" step="any" min="-180" max="180" placeholder="e.g. -122.42">
+    </div>
+</div>
+<div class="form-group">
+    <label for="units" class="form-label">Temperature:</label>
+    <select id="units" name="units" class="form-input">
+        <option value="metric">Celsius (°C)</option><option value="imperial">Fahrenheit (°F)</option>
+    </select>
+</div>
+
+<h3>Calendar</h3>
+<div class="form-group">
+    <label for="showCalendar" class="form-label">Calendar section:</label>
+    <select id="showCalendar" name="showCalendar" class="form-input">
+        <option value="true">Show</option><option value="false">Hide</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="calendarUrls" class="form-label">Calendar ICS URLs:</label>
+    <textarea id="calendarUrls" name="calendarUrls" class="form-input" rows="3" placeholder="One https:// or webcal:// calendar URL per line"></textarea>
+    <small>Up to five calendars. Shows the next three events over seven days, including all-day and ongoing events. Uses the timezone and time format in device settings.</small>
+</div>
+
+<h3>MQTT readings</h3>
+<p>Use the broker configured on the API Keys page. Leave a topic blank to hide that reading. A JSON field can be a dotted path, such as <code>sensor.temperature</code>.</p>
+<datalist id="todayTopics">
+    {% for topic in mqtt_topics %}<option value="{{ topic }}">{% endfor %}
+</datalist>
+{% for i in range(1, 4) %}
+<fieldset class="today-sensor">
+    <legend>Reading {{ i }}</legend>
+    <div class="today-fields">
+        <div class="form-group">
+            <label for="sensorLabel{{ i }}" class="form-label">Label:</label>
+            <input id="sensorLabel{{ i }}" name="sensorLabel{{ i }}" class="form-input" maxlength="60" placeholder="e.g. Room temperature">
+        </div>
+        <div class="form-group">
+            <label for="sensorTopic{{ i }}" class="form-label">Topic:</label>
+            <input id="sensorTopic{{ i }}" name="sensorTopic{{ i }}" class="form-input" list="todayTopics" placeholder="e.g. inkypi/desk/state">
+        </div>
+        <div class="form-group">
+            <label for="sensorField{{ i }}" class="form-label">JSON field:</label>
+            <input id="sensorField{{ i }}" name="sensorField{{ i }}" class="form-input" placeholder="e.g. temp_c">
+        </div>
+        <div class="form-group">
+            <label for="sensorUnit{{ i }}" class="form-label">Unit:</label>
+            <input id="sensorUnit{{ i }}" name="sensorUnit{{ i }}" class="form-input" maxlength="16" placeholder="e.g. °C">
+        </div>
+    </div>
+</fieldset>
+{% endfor %}
+<div class="form-group">
+    <label for="staleMinutes" class="form-label">Mark readings stale after (minutes):</label>
+    <input id="staleMinutes" name="staleMinutes" class="form-input" type="number" min="1" max="1440" value="15">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const fields = ['title', 'reminder', 'showWeather', 'locationName', 'latitude', 'longitude',
+            'units', 'showCalendar', 'calendarUrls', 'staleMinutes'];
+        for (let i = 1; i <= 3; i++) {
+            for (const name of ['sensorLabel', 'sensorTopic', 'sensorField', 'sensorUnit']) fields.push(name + i);
+        }
+        for (const name of fields) {
+            if (Object.prototype.hasOwnProperty.call(pluginSettings, name)) {
+                document.getElementById(name).value = pluginSettings[name];
+            }
+        }
+    });
+</script>
+<style>
+    .today-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .today-fields .form-input { width: 100%; box-sizing: border-box; }
+    .today-sensor { margin: 12px 0; border: 1px solid var(--border-color, #999); border-radius: 6px; }
+    @media (max-width: 600px) { .today-fields { grid-template-columns: 1fr; } }
+</style>
