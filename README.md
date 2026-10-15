@@ -12,7 +12,7 @@ This is [Walton Cheung](https://walju.net)'s fork of [InkyPi](https://github.com
 - **Bundled community plugins:** Plugin Manager, Duo Weather, Mini Weather, Literature Clock, and Windows PC Stats are included in `src/plugins/`. The [plugin credits and changes](docs/third_party_plugins.md) identify their authors and this fork's adjustments.
 - **Windows PC Stats adjustments:** The layout scales to the configured display, and the included PowerShell sync script works with current Windows builds. Its default Pi destination is specific to this build; see the [plugin notes](docs/third_party_plugins.md) before using it on another device.
 
-The upstream web interface, scheduled playlists, and plugins for clocks, weather, calendars, images, news, and comics are here too. AI Image is included; Year Progress, AI Text, GitHub, and Hardware Buttons have been removed from this build. Saved playlist entries for those removed plugins are dropped when the configuration loads, and saved with the next configuration update. Other plugin settings are retained.
+The upstream web interface, scheduled playlists, and plugins for clocks, weather, calendars, images, news, and comics are here too. AI Image is included. Year Progress, AI Text, GitHub, Hardware Buttons, Screenshot, To-Do List, Unsplash, and Wikipedia Picture of the Day have been removed from this build. Saved playlist entries for those removed plugins are dropped when the configuration loads, and saved with the next configuration update. Other plugin settings are retained.
 
 This fork retains support for the display hardware handled by InkyPi's installer, including Pimoroni Inky and supported Waveshare e-paper models.
 

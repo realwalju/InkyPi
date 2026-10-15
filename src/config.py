@@ -8,7 +8,10 @@ logger = logging.getLogger(__name__)
 
 # Retired from this fork. Only remove saved instances when the plugin is absent,
 # so a deliberately reinstalled community plugin can still be used.
-RETIRED_PLUGINS = {"year_progress", "ai_text", "github", "hardwarebuttons"}
+RETIRED_PLUGINS = {
+    "year_progress", "ai_text", "github", "hardwarebuttons",
+    "screenshot", "todo_list", "unsplash", "wpotd",
+}
 
 class Config:
     # Base path for the project directory

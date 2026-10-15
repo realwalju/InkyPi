@@ -147,13 +147,15 @@ def test_settings_template_has_all_saved_fields_and_escapes_topics():
     assert 'name="sensorTopic3"' in html and 'name="calendarUrls"' in html
 
 
-def test_retired_playlist_entries_are_removed_without_touching_ai_image(tmp_path, monkeypatch):
+@pytest.mark.parametrize("last_plugin", ["github", "screenshot", "todo_list", "unsplash", "wpotd"])
+def test_retired_playlist_entries_are_removed_without_touching_ai_image(tmp_path, monkeypatch, last_plugin):
     entries = [{"plugin_id": plugin, "name": plugin, "plugin_settings": {"kept": True}, "refresh": {"interval": 900}}
-               for plugin in ("ai_text", "ai_image", "year_progress", "github", "hardwarebuttons")]
+               for plugin in ("ai_text", "ai_image", "year_progress", "github", "hardwarebuttons",
+                              "screenshot", "todo_list", "unsplash", "wpotd")]
     path = tmp_path / "device.json"
     path.write_text(json.dumps({
         "playlist_config": {"playlists": [{"name": "Default", "start_time": "00:00", "end_time": "24:00", "plugins": entries, "current_plugin_index": 4}]},
-        "refresh_info": {"plugin_id": "github", "refresh_time": NOW.isoformat()},
+        "refresh_info": {"plugin_id": last_plugin, "refresh_time": NOW.isoformat()},
     }))
     monkeypatch.setattr(Config, "config_file", str(path))
     config = Config()
@@ -163,5 +165,6 @@ def test_retired_playlist_entries_are_removed_without_touching_ai_image(tmp_path
     assert playlist.plugins[0].settings == {"kept": True}
     assert config.refresh_info.plugin_id is None
     assert config.get_plugin("today") and config.get_plugin("ai_image")
+    assert all(config.get_plugin(plugin) is None for plugin in ("screenshot", "todo_list", "unsplash", "wpotd"))
     config.write_config()
     assert [p["plugin_id"] for p in json.loads(path.read_text())["playlist_config"]["playlists"][0]["plugins"]] == ["ai_image"]

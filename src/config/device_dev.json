@@ -20,11 +20,7 @@
         "image_url",
         "newspaper",
         "rss",
-        "screenshot",
-        "todo_list",
-        "unsplash",
-        "weather",
-        "wpotd"
+        "weather"
     ],
     "playlist_config": {
         "playlists": [
