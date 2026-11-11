@@ -7,8 +7,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-IMAGE_MODELS = ["gpt-image-1", "gpt-image-2"]
-DEFAULT_IMAGE_MODEL = "gpt-image-1"
+# gpt-image-1 was shut down 2026-10-23 and gpt-image-2 shuts down 2027-02-10;
+# OpenAI names the gpt-image-2.6 family as the replacement for both.
+# Flare is the fast model, Sunburst the more detailed one (same token pricing).
+IMAGE_MODELS = ["gpt-image-2.6-flare", "gpt-image-2.6-sunburst"]
+DEFAULT_IMAGE_MODEL = "gpt-image-2.6-flare"
+LEGACY_IMAGE_MODELS = {"gpt-image-1", "gpt-image-1-mini", "gpt-image-1.5", "gpt-image-2", "dall-e-2", "dall-e-3"}
+IMAGE_QUALITIES = ["low", "medium", "high"]
 DEFAULT_IMAGE_QUALITY = "medium"
 
 class AIImage(BasePlugin):
@@ -29,29 +34,31 @@ class AIImage(BasePlugin):
             logger.error("OpenAI API Key not configured")
             raise RuntimeError("OPEN AI API Key not configured.")
 
-        text_prompt = settings.get("textPrompt", "")
-        image_model = settings.get('imageModel', DEFAULT_IMAGE_MODEL)
+        text_prompt = (settings.get("textPrompt") or "").strip()
+        if not text_prompt:
+            raise RuntimeError("Text Prompt is required.")
+        image_model = settings.get('imageModel') or DEFAULT_IMAGE_MODEL
+
+        if image_model in LEGACY_IMAGE_MODELS:
+            logger.warning(f"Image model '{image_model}' is retired by OpenAI, using {DEFAULT_IMAGE_MODEL} instead")
+            image_model = DEFAULT_IMAGE_MODEL
 
         if image_model not in IMAGE_MODELS:
             logger.error(f"Invalid image model: {image_model}")
             raise RuntimeError("Invalid Image Model provided.")
 
-        image_quality = settings.get('quality', DEFAULT_IMAGE_QUALITY)
-        randomize_prompt = settings.get('randomizePrompt') == 'true'
+        image_quality = settings.get('quality') or DEFAULT_IMAGE_QUALITY
+        if image_quality not in IMAGE_QUALITIES:
+            logger.warning(f"Invalid image quality '{image_quality}', using {DEFAULT_IMAGE_QUALITY}")
+            image_quality = DEFAULT_IMAGE_QUALITY
         orientation = device_config.get_config("orientation")
 
         logger.info(f"Settings: model={image_model}, quality={image_quality}, orientation={orientation}")
-        logger.debug(f"Original prompt: '{text_prompt}'")
-        logger.debug(f"Randomize prompt: {randomize_prompt}")
+        logger.debug(f"Prompt: '{text_prompt}'")
 
         image = None
         try:
             ai_client = OpenAI(api_key = api_key)
-
-            if randomize_prompt:
-                logger.debug("Generating randomized prompt using GPT-4...")
-                text_prompt = AIImage.fetch_image_prompt(ai_client, text_prompt)
-                logger.info(f"Randomized prompt: '{text_prompt}'")
 
             logger.info(f"Generating image with {image_model}...")
             image = self.fetch_image(
@@ -98,60 +105,3 @@ class AIImage(BasePlugin):
         image_bytes = base64.b64decode(image_base64)
         img = Image.open(BytesIO(image_bytes))
         return img
-
-    @staticmethod
-    def fetch_image_prompt(ai_client, from_prompt=None):
-        logger.info("Getting random image prompt...")
-
-        system_content = (
-            "You are a creative assistant generating extremely random and unique image prompts. "
-            "Avoid common themes. Focus on unexpected, unconventional, and bizarre combinations "
-            "of art style, medium, subjects, time periods, and moods. No repetition. Prompts "
-            "should be 20 words or less and specify random artist, movie, tv show or time period "
-            "for the theme. Do not provide any headers or repeat the request, just provide the "
-            "updated prompt in your response."
-        )
-        user_content = (
-            "Give me a completely random image prompt, something unexpected and creative! "
-            "Let's see what your AI mind can cook up!"
-        )
-        if from_prompt and from_prompt.strip():
-            system_content = (
-                "You are a creative assistant specializing in generating highly descriptive "
-                "and unique prompts for creating images. When given a short or simple image "
-                "description, your job is to rewrite it into a more detailed, imaginative, "
-                "and descriptive version that captures the essence of the original while "
-                "making it unique and vivid. Avoid adding irrelevant details but feel free "
-                "to include creative and visual enhancements. Avoid common themes. Focus on "
-                "unexpected, unconventional, and bizarre combinations of art style, medium, "
-                "subjects, time periods, and moods. Do not provide any headers or repeat the "
-                "request, just provide your updated prompt in the response. Prompts "
-                "should be 20 words or less and specify random artist, movie, tv show or time "
-                "period for the theme."
-            )
-            user_content = (
-                f"Original prompt: \"{from_prompt}\"\n"
-                "Rewrite it to make it more detailed, imaginative, and unique while staying "
-                "true to the original idea. Include vivid imagery and descriptive details. "
-                "Avoid changing the subject of the prompt."
-            )
-
-        # Make the API call
-        response = ai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_content
-                },
-                {
-                    "role": "user",
-                    "content": user_content
-                }
-            ],
-            temperature=1
-        )
-
-        prompt = response.choices[0].message.content.strip()
-        logger.info(f"Generated random image prompt: {prompt}")
-        return prompt

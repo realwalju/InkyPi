@@ -10,8 +10,8 @@
     <div class="form-group">
         <label for="imageModel" class="form-label">Image Model:</label>
         <select id="imageModel" name="imageModel" class="form-input" onchange="toggleQualityDropdown()">
-            <option value="gpt-image-1" selected>GPT Image 1</option>
-            <option value="gpt-image-2">GPT Image 2</option>
+            <option value="gpt-image-2.6-flare" selected>GPT Image 2.6 Flare (fast)</option>
+            <option value="gpt-image-2.6-sunburst">GPT Image 2.6 Sunburst (detailed)</option>
         </select>
     </div>
 
@@ -23,50 +23,46 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label for="randomizePrompt" class="form-label">Randomize Text Prompt:</label>
-    <div class="toggle-container">
-        <input type="checkbox" id="randomizePrompt" name="randomizePrompt" class="toggle-checkbox" value="false" onclick="this.value=this.checked ? 'true' : 'false';">
-        <label for="randomizePrompt" class="toggle-label"></label>
-    </div>
-</div>
-
-
 <script>
+    const DEFAULT_IMAGE_MODEL = 'gpt-image-2.6-flare';
+    const DEFAULT_QUALITY = 'medium';
+
     function toggleQualityDropdown(quality = "") {
-        const imageModelDropdown = document.getElementById("imageModel");
         const qualityDropdown = document.getElementById("quality");
-        const selectedModel = imageModelDropdown.value;
+        const previous = quality || qualityDropdown.value;
 
         // Clear out old options
         qualityDropdown.innerHTML = "";
 
-        if (selectedModel === "gpt-image-1" || selectedModel === "gpt-image-2") {
-            qualityDropdown.add(new Option("High", "high"));
-            qualityDropdown.add(new Option("Medium", "medium"));
-            qualityDropdown.add(new Option("Low", "low"));
-        }
+        // Low is the cheapest and usually plenty for an e-ink panel
+        qualityDropdown.add(new Option("High", "high"));
+        qualityDropdown.add(new Option("Medium", "medium"));
+        qualityDropdown.add(new Option("Low (cheapest)", "low"));
 
-        if (quality != "") {
-            qualityDropdown.value = quality;
+        qualityDropdown.value = previous;
+        if (!qualityDropdown.value) {
+            qualityDropdown.value = DEFAULT_QUALITY;
         }
     }
 
     // populate form values from plugin settings
-    document.addEventListener('DOMContentLoaded', () => {   
-        // defaults
-        var imageModel = 'gpt-image-1'
-        var quality = 'medium'
+    document.addEventListener('DOMContentLoaded', () => {
+        var imageModel = DEFAULT_IMAGE_MODEL;
+        var quality = DEFAULT_QUALITY;
 
         if (loadPluginSettings) {
             document.getElementById('textPrompt').value = pluginSettings.textPrompt || '';
-            document.getElementById('randomizePrompt').checked = pluginSettings.randomizePrompt || false;
 
-            imageModel = pluginSettings.imageModel;
-            quality = pluginSettings.quality;
+            imageModel = pluginSettings.imageModel || DEFAULT_IMAGE_MODEL;
+            quality = pluginSettings.quality || DEFAULT_QUALITY;
         }
 
-        document.getElementById('imageModel').value = imageModel;
-        toggleQualityDropdown(quality)
+        const modelDropdown = document.getElementById('imageModel');
+        modelDropdown.value = imageModel;
+        if (!modelDropdown.value) {
+            // Saved model was retired (e.g. gpt-image-1 / gpt-image-2)
+            modelDropdown.value = DEFAULT_IMAGE_MODEL;
+        }
+        toggleQualityDropdown(quality);
     });
 </script>
