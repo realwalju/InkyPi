@@ -1,0 +1,62 @@
+<div class="form-group">
+    <label class="form-label">Miner:</label>
+    <span>
+        {% if miner_running is none %}status unknown (no twitch-miner service found)
+        {% elif miner_running %}running
+        {% else %}stopped{% endif %}
+    </span>
+    <p class="points-hint">Shows the channel points collected by Twitch-Channel-Points-Miner-v2 running on this Pi. See docs/twitch_points.md for setup.</p>
+</div>
+
+<div class="form-group">
+    <label for="title" class="form-label">Title:</label>
+    <input type="text" id="title" name="title" class="form-input" placeholder="CHANNEL POINTS">
+</div>
+
+<div class="form-group">
+    <label for="analyticsDir" class="form-label">Analytics Folder:</label>
+    <input type="text" id="analyticsDir" name="analyticsDir" class="form-input" placeholder="{{ default_analytics_dir }}">
+</div>
+
+<div class="form-group nowrap">
+    <label for="windowHours" class="form-label">Chart Window:</label>
+    <select id="windowHours" name="windowHours" class="form-input">
+        <option value="24">24 hours</option>
+        <option value="168">7 days</option>
+        <option value="720">30 days</option>
+    </select>
+</div>
+
+<div class="form-group nowrap">
+    <label for="sortBy" class="form-label">Order:</label>
+    <select id="sortBy" name="sortBy" class="form-input">
+        <option value="activity">Live first, then most recent</option>
+        <option value="points">Most points</option>
+        <option value="name">Name</option>
+    </select>
+</div>
+
+<div class="form-group nowrap">
+    <label for="maxChannels" class="form-label">Channels Shown:</label>
+    <input type="number" id="maxChannels" name="maxChannels" class="form-input" min="1" max="12" placeholder="6">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (loadPluginSettings) {
+            document.getElementById('title').value = pluginSettings.title || '';
+            document.getElementById('analyticsDir').value = pluginSettings.analyticsDir || '';
+            document.getElementById('windowHours').value = pluginSettings.windowHours || '24';
+            document.getElementById('sortBy').value = pluginSettings.sortBy || 'activity';
+            document.getElementById('maxChannels').value = pluginSettings.maxChannels || '';
+        }
+    });
+</script>
+
+<style>
+    .points-hint {
+        font-size: 0.85em;
+        opacity: 0.75;
+        margin: 4px 0;
+    }
+</style>

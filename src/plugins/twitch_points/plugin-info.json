@@ -1,0 +1,6 @@
+{
+    "display_name": "Twitch Points",
+    "id": "twitch_points",
+    "class": "TwitchPoints",
+    "repository": "https://github.com/realwalju/InkyPi"
+}

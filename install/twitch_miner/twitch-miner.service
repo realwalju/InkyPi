@@ -1,0 +1,17 @@
+[Unit]
+Description=Twitch Channel Points Miner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=__USER__
+WorkingDirectory=/opt/twitch-miner
+ExecStart=/opt/twitch-miner/venv/bin/python -u run.py
+Restart=always
+RestartSec=30
+KillSignal=SIGINT
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

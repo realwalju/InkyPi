@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+# Minimal config for Twitch-Channel-Points-Miner-v2 on the Pi.
+# Every option is described in the miner's README:
+# https://github.com/rdavydov/Twitch-Channel-Points-Miner-v2#readme
+
+import logging
+
+from TwitchChannelPointsMiner import TwitchChannelPointsMiner
+from TwitchChannelPointsMiner.classes.Settings import Priority
+from TwitchChannelPointsMiner.logger import LoggerSettings
+
+twitch_miner = TwitchChannelPointsMiner(
+    username="your-twitch-username",
+    # No password here: the first start prints a code to enter at twitch.tv/activate.
+    enable_analytics=True,  # Required. The InkyPi Twitch Points plugin reads these files.
+    priority=[Priority.STREAK, Priority.DROPS, Priority.ORDER],
+    logger_settings=LoggerSettings(
+        save=True,
+        console_level=logging.INFO,
+        file_level=logging.INFO,
+        emoji=False,    # Plain output reads better in journalctl
+        colored=False,
+    ),
+)
+
+twitch_miner.mine(
+    [
+        "streamer-one",
+        "streamer-two",
+    ],                  # Order = priority
+    followers=False,    # True also mines every channel you follow
+)
